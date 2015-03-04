@@ -57,6 +57,18 @@ class Remove_member(Request):
     uri = 'teams/{id}/members/{user}'
 
 
+class Has_membership(Request):
+    uri = 'teams/{id}/memberships/{user}'
+
+
+class Add_membership(Request):
+    uri = 'teams/{id}/memberships/{user}'
+
+
+class Remove_membership(Request):
+    uri = 'teams/{id}/memberships/{user}'
+
+
 class List_repos(Request):
     uri = 'teams/{id}/repos'
     resource = Repo

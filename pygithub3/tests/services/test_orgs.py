@@ -3,6 +3,7 @@
 import requests
 from mock import patch
 
+from pygithub3.exceptions import NotFound
 from pygithub3.services.orgs import Org, Members, Teams
 from pygithub3.tests.utils.base import (dummy_json, mock_response,
     mock_response_result)
@@ -144,6 +145,49 @@ class TestTeamsService(TestCase):
         self.ts.remove_member(1, 'octocat')
         self.assertEqual(request_method.call_args[0],
                          ('delete', _('teams/1/members/octocat')))
+
+    def test_HAS_MEMBERSHIP_ACTIVE(self, request_method):
+        request_method.return_value = mock_response(
+            content={'state': 'active', 'url': ''})
+        response = self.ts.has_membership(1, 'octocat')
+        self.assertEqual(request_method.call_args[0],
+                         ('get', _('teams/1/memberships/octocat')))
+        self.assertEqual(response['state'], 'active')
+
+    def test_HAS_MEMBERSHIP_PENDING(self, request_method):
+        request_method.return_value = mock_response(
+            content={'state': 'pending', 'url': ''})
+        response = self.ts.has_membership(1, 'octocat')
+        self.assertEqual(request_method.call_args[0],
+                         ('get', _('teams/1/memberships/octocat')))
+        self.assertEqual(response['state'], 'pending')
+
+    def test_HAS_MEMBERSHIP_NOT_FOUND(self, request_method):
+        request_method.side_effect = NotFound("404 - Not Found")
+        with self.assertRaises(NotFound):
+            self.ts.has_membership(1, 'idontexist')
+
+    def test_ADD_MEMBERSHIP_ACTIVE(self, request_method):
+        request_method.return_value = mock_response(
+            content={'state': 'active', 'url': ''})
+        response = self.ts.add_membership(1, 'octocat')
+        self.assertEqual(request_method.call_args[0],
+                         ('put', _('teams/1/memberships/octocat')))
+        self.assertEqual(response['state'], 'active')
+
+    def test_ADD_MEMBERSHIP_PENDING(self, request_method):
+        request_method.return_value = mock_response(
+            content={'state': 'pending', 'url': ''})
+        response = self.ts.add_membership(1, 'octocat')
+        self.assertEqual(request_method.call_args[0],
+                         ('put', _('teams/1/memberships/octocat')))
+        self.assertEqual(response['state'], 'pending')
+
+    def test_REMOVE_MEMBERSHIP(self, request_method):
+        request_method.return_value = mock_response('delete')
+        self.ts.remove_membership(1, 'octocat')
+        self.assertEqual(request_method.call_args[0],
+                         ('delete', _('teams/1/memberships/octocat')))
 
     def test_LIST_REPOS(self, request_method):
         request_method.return_value = mock_response_result()

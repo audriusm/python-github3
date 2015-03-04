@@ -64,7 +64,7 @@ class Teams(Service):
         return self._get_result(request)
 
     def is_member(self, id, user):
-        """ Determine if user is a member of a team
+        """ Determine if user is a member of a team (deprecated)
 
         :param int id: The team id
         :param str user: User name
@@ -74,7 +74,7 @@ class Teams(Service):
         return self._bool(request)
 
     def add_member(self, id, user):
-        """ Add a user to a team
+        """ Add a user to a team (deprecated)
 
         :param int id: The team id
         :param str user: User name
@@ -84,12 +84,43 @@ class Teams(Service):
         return self._put(request)
 
     def remove_member(self, id, user):
-        """ Remove a member from a team
+        """ Remove a member from a team (deprecated)
 
         :param int id: The team id
         :param str user: User name
         """
         request = self.request_builder('orgs.teams.remove_member',
+                                       id=id, user=user)
+        return self._delete(request)
+
+    def has_membership(self, id, user):
+        """ Determine if user has specified team membership
+
+        :param int id: The team id
+        :param str user: User name
+        :returns: A :doc:`result`
+        """
+        request = self.request_builder('orgs.teams.has_membership',
+                                       id=id, user=user)
+        return self._get(request)
+
+    def add_membership(self, id, user):
+        """ Add a user to a team
+
+        :param int id: The team id
+        :param str user: User name
+        """
+        request = self.request_builder('orgs.teams.add_membership',
+                                       id=id, user=user)
+        return self._put(request)
+
+    def remove_membership(self, id, user):
+        """ Remove a member from a team
+
+        :param int id: The team id
+        :param str user: User name
+        """
+        request = self.request_builder('orgs.teams.remove_membership',
                                        id=id, user=user)
         return self._delete(request)
 

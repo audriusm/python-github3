@@ -125,7 +125,7 @@ class Service(object):
 
         Related: https://github.com/github/developer.github.com/pull/52
         """
-        input_data = request.get_body() or 'PLACEHOLDER'
+        input_data = request.get_body() or '{"DUMMY": "PLACEHOLDER"}'
         response = self._client.put(request, data=input_data, **kwargs)
         if response.status_code != 204:  # != NO_CONTENT
             return request.resource.loads(response.content)
